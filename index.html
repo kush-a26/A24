@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A24: It's Not a Genre. It's a Vibe.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the page */
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #ffffff;
+            color: #fff;
+            scroll-behavior: smooth;
+        }
+
+        /* General Section Styling */
+        .content-section {
+            min-height: 100vh;
+            padding: 15vh 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Needed for overlays */
+            width: 100%;
+        }
+
+        /* Dark section specific styles */
+        .dark-section {
+             background-color: #212121;
+        }
+
+        /* Hero section styles */
+        .hero-section {
+            height: 100vh;
+            background-image: url('https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/a24%20hero%20image.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        /* Styling for the A24 logo placeholder */
+        .a24-logo {
+            font-weight: 900;
+            font-size: 2rem;
+            letter-spacing: -0.1em;
+            border: 3px solid white;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+        }
+
+        /* Gradient overlay for smooth transition from hero */
+        .gradient-overlay-hero {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            background: linear-gradient(to top, #212121 20%, transparent);
+        }
+
+        /* Scroll down arrow animation */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .scroll-arrow {
+            position: absolute;
+            bottom: 2rem;
+            z-index: 10;
+        }
+
+        /* Carousel Section Styles */
+        .carousel-section {
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-color: #000;
+        }
+
+        .carousel-image.active {
+            opacity: 1;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: left;
+            background: linear-gradient(to right, rgba(0,0,0,0.6) 30%, transparent);
+            z-index: 10;
+        }
+        
+        /* Gradient overlay for smooth transition from carousel to white section */
+        .gradient-overlay-carousel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            background: linear-gradient(to top, #ffffff 30%, transparent);
+            z-index: 5;
+        }
+
+        /* Text Section Animation Styles */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Style for the icons in the third section */
+        .icon-img {
+            height: 80px;
+            width: auto;
+            margin-bottom: 1rem;
+        }
+        
+        /* Styles for the white text section */
+        .text-section-white {
+            background-color: #ffffff;
+            color: #4a5568;
+        }
+        
+        .text-section-white h2, .text-section-white h3, .text-section-white strong {
+            color: #1a202c;
+        }
+        
+        /* Timeline highlight style */
+        #moonlight-highlight {
+            position: fixed; /* Changed to fixed for better positioning during scroll */
+            border: 4px solid #4f46e5;
+            box-shadow: 0 0 25px 10px #4f46e5;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            pointer-events: none; /* So it doesn't interfere with mouse events */
+            z-index: 20;
+        }
+
+        /* Moonlight Section Styles */
+        #moonlight-section {
+            overflow: hidden; /* To contain the blurred background */
+        }
+
+        .moonlight-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(135deg, #4c51bf, #6b46c1, #b794f4);
+            filter: blur(100px);
+            opacity: 0.8;
+            animation: dissolve-bg 20s infinite alternate;
+        }
+        
+        @keyframes dissolve-bg {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* Gradient overlay for smooth transition from moonlight to white section */
+        .gradient-overlay-moonlight {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            background: linear-gradient(to top, #ffffff 30%, transparent);
+            z-index: 5;
+        }
+
+        /* Gradient overlay for transition from white to black */
+        .gradient-overlay-to-dark {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            background: linear-gradient(to top, #212121 30%, transparent);
+            z-index: 5;
+        }
+        
+        /* Gradient overlay for transition from dark back to white */
+        .gradient-overlay-to-light {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            background: linear-gradient(to top, #ffffff 30%, transparent);
+            z-index: 5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Section 1: Hero -->
+    <section id="hero" class="hero-section dark-section">
+        <div class="a24-logo">A24</div>
+        <div class="gradient-overlay-hero"></div>
+        <a href="#carousel" class="scroll-arrow">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+        </a>
+    </section>
+
+    <!-- Section 2: Dissolve Carousel -->
+    <section id="carousel" class="carousel-section dark-section">
+        <div class="carousel-container">
+            <img src="https://static1.srcdn.com/wordpress/wp-content/uploads/2023/07/ke-huy-quan-in-everything-everywhere-all-at-once.png" class="carousel-image active" alt="Scene from Everything Everywhere All at Once" onerror="this.style.display='none'">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/ba3f8c431373e59b345bc5cb0cc3cbf4d592aab3/Video-Production-Company-Midsommar-a24--1024x576.png" class="carousel-image" alt="Scene from Midsommar" onerror="this.style.display='none'">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/ba3f8c431373e59b345bc5cb0cc3cbf4d592aab3/5-Euphoria-3.jpg" class="carousel-image" alt="Scene from Euphoria" onerror="this.style.display='none'">
+        </div>
+        <div class="text-overlay">
+            <h2 class="text-3xl md:text-5xl font-black uppercase max-w-lg px-8 md:px-16">It's Not a Genre. It's a Vibe.</h2>
+        </div>
+        <div class="gradient-overlay-carousel"></div>
+    </section>
+
+    <!-- Section 3: Text Content -->
+    <section id="text-section" class="content-section text-section-white">
+        <div class="max-w-4xl w-full text-base md:text-lg leading-relaxed space-y-12">
+            <p class="animate-on-scroll">The independent film studio A24 was founded by Daniel Katz, David Fenkel, and John Hodges. The company was established in New York City on August 20, 2012.</p>
+            <p class="animate-on-scroll" style="transition-delay: 0.2s;">A24 is the signature on a new kind of film: authentic, audacious, and unforgettable. This identity is built on two foundational principles:</p>
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 animate-on-scroll" style="transition-delay: 0.4s;">
+                <div><h3 class="font-bold text-2xl mb-2">1. Filmmaker-Centric Approach:</h3><p>A24 champions a director's singular vision, granting creative freedom and final cut instead of building films by committee.</p></div>
+                <div><h3 class="font-bold text-2xl mb-2">2. Digital-First Marketing:</h3><p>They skip costly traditional ads, building a loyal online fanbase through viral social media campaigns, cryptic trailers, and exclusive merchandise.</p></div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center pt-8 animate-on-scroll" style="transition-delay: 0.6s;">
+                <div class="flex flex-col items-center animate-on-scroll" style="transition-delay: 0.8s;"><img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/production.png" alt="Production Icon" class="icon-img" onerror="this.style.display='none'"><p><strong>Production</strong> is making the movie.</p></div>
+                <div class="flex flex-col items-center animate-on-scroll" style="transition-delay: 1s;"><img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/megaphone.png" alt="Distribution Icon" class="icon-img" onerror="this.style.display='none'"><p><strong>Distribution</strong> is marketing it and getting it to theaters.</p></div>
+                <div class="flex flex-col items-center animate-on-scroll" style="transition-delay: 1.2s;"><img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/Exhibition.png" alt="Exhibition Icon" class="icon-img" onerror="this.style.display='none'"><p><strong>Exhibition</strong> is the theatre that shows it.</p></div>
+            </div>
+            <p class="text-center pt-8 animate-on-scroll" style="transition-delay: 1.4s;">A24 started as the middle-man (Distribution)</p>
+        </div>
+    </section>
+
+    <!-- Section 4: Timeline Image -->
+    <section id="timeline-section" class="content-section text-section-white pt-0">
+        <div class="max-w-6xl w-full animate-on-scroll relative">
+            <img id="timeline-image" src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/timelineA24.png" alt="A24 Company Timeline" class="w-full h-auto rounded-lg shadow-xl" onerror="this.style.display='none'">
+            <div id="moonlight-highlight"></div>
+        </div>
+    </section>
+    
+    <!-- Section 5: Moonlight -->
+    <section id="moonlight-section" class="content-section">
+        <div class="moonlight-bg"></div>
+        <div class="max-w-5xl w-full grid md:grid-cols-2 gap-8 items-center text-white z-10">
+            <div class="animate-on-scroll">
+                <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/moonlight.png" alt="Moonlight Poster" class="rounded-lg shadow-2xl w-full max-w-sm mx-auto">
+            </div>
+            <div class="space-y-6 animate-on-scroll" style="transition-delay: 0.2s;">
+                <p class="text-xl md:text-2xl leading-relaxed">In 2016, A24 co-produced Moonlight. A small, deeply personal film made for just $1.5 million, it went on to achieve the impossible: it won the Academy Award for Best Picture.</p>
+                <div class="flex items-center space-x-4">
+                    <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/image%203.png" alt="Oscar Statues" class="h-24">
+                    <p class="text-3xl font-bold">Moonlight won 3 oscars.</p>
+                </div>
+            </div>
+        </div>
+        <div class="gradient-overlay-moonlight"></div>
+    </section>
+
+    <!-- Section 6: Oscar Wins Graphic -->
+    <section id="oscar-wins-section" class="content-section text-section-white">
+        <div class="max-w-6xl w-full animate-on-scroll">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/Oscar%20wins.png" alt="A24 Oscar Wins Graphic" class="w-full h-auto rounded-lg shadow-xl" onerror="this.style.display='none'">
+        </div>
+    </section>
+    
+    <!-- Section 7: Everything Everywhere All At Once -->
+    <section id="eeao-section" class="content-section text-section-white">
+        <div class="max-w-5xl w-full grid md:grid-cols-2 gap-20 items-center animate-on-scroll">
+            <div class="animate-on-scroll">
+                <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/EEAAO.png" alt="Everything Everywhere All At Once Poster" class="rounded-lg shadow-2xl w-full max-w-sm mx-auto">
+            </div>
+            <div class="flex flex-col justify-center space-y-6 animate-on-scroll text-gray-800" style="transition-delay: 0.2s;">
+                 <p class="text-xl md:text-2xl leading-relaxed text-left">
+                    <strong>Everything Everywhere All At Once</strong><br>won <strong>7 oscars</strong> at the 95th Academy Awards.
+                 </p>
+                 <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/image%204.png" alt="Oscar Statues" class="h-24 md:h-32 self-start">
+            </div>
+        </div>
+        <div class="gradient-overlay-to-dark"></div>
+    </section>
+
+    <!-- Section 8: Graph Intro Text -->
+    <section id="graph-intro-section" class="content-section dark-section">
+        <div class="max-w-3xl w-full text-center space-y-8">
+            <p class="text-3xl md:text-5xl font-bold animate-on-scroll">
+                Are all the movies that they make really that good?
+            </p>
+            <p class="text-xl md:text-2xl text-gray-400 animate-on-scroll" style="transition-delay: 0.4s;">
+                The graph shows all the movies mapped by ROI and Metacritic score.
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 9: ROI vs. Metacritic Graph -->
+    <section id="roi-graph-section" class="content-section dark-section">
+        <div class="max-w-6xl w-full animate-on-scroll" style="transition-delay: 0.5s;">
+             <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/crtical%20acclain.png" alt="A24 Movie ROI vs. Metacritic Score" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/1200x800/212121/ffffff?text=Error+Loading+Graph'">
+        </div>
+    </section>
+
+    <!-- Section 10: Google Trends Graphic -->
+    <section id="google-trends-section" class="content-section dark-section">
+        <div class="max-w-6xl w-full animate-on-scroll" style="transition-delay: 0.2s;">
+             <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/google%20trends.png" alt="Google Trends for A24" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/1200x800/212121/ffffff?text=Error+Loading+Graph'">
+        </div>
+    </section>
+
+    <!-- Section 11: Identification -->
+    <section id="identification-section" class="dark-section content-section">
+        <div class="max-w-4xl w-full text-center space-y-8">
+            <p class="text-4xl md:text-6xl font-bold animate-on-scroll">
+                How to Identify if it’s an A24 movie?
+            </p>
+            <p class="text-xl md:text-2xl text-gray-400 animate-on-scroll" style="transition-delay: 0.4s;">
+                is there some common trait that these indie films follow?
+            </p>
+        </div>
+        <div class="gradient-overlay-to-light"></div>
+    </section>
+
+    <!-- Section 12: Visual Comparison -->
+    <section id="comparison-section" class="content-section text-section-white">
+        <div class="max-w-5xl w-full animate-on-scroll">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/colour%20slide.png" alt="A24 Movie Color & Style Comparison" class="w-full h-auto rounded-lg shadow-xl">
+        </div>
+    </section>
+
+    <!-- Section 13: Raw Graphing -->
+    <section id="raw-graphing-section" class="content-section text-section-white">
+        <div class="max-w-5xl w-full animate-on-scroll">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/raw%20graphing.png" alt="Raw Graphing of A24 Films" class="w-full h-auto rounded-lg shadow-xl">
+        </div>
+    </section>
+
+    <!-- Section 14: Polarizing Films -->
+    <section id="polarizing-section" class="content-section text-section-white">
+        <div class="max-w-5xl w-full animate-on-scroll">
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/polarizing.png" alt="A24 Polarizing Films Graphic" class="w-full h-auto rounded-lg shadow-xl">
+        </div>
+    </section>
+
+    <!-- Section 15: Unconventional Marketing -->
+    <section id="marketing-section" class="content-section text-section-white">
+        <div class="max-w-4xl w-full text-center animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Unconventional Marketing</h2>
+            <p class="text-lg md:text-xl leading-relaxed text-gray-700 mb-12">
+                A24 shuns traditional advertising for creative and unconventional marketing designed to create organic, viral buzz. This often involves unique digital stunts, like creating a Tinder bot for Ex Machina, or niche social media campaigns, like giving a film's goat character its own Twitter account. By focusing on experiential events, targeted merchandise, and building a "cult of A24," the studio has successfully marketed itself as a distinct lifestyle brand.
+            </p>
+            <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/marketing%20final.png" alt="A24 Unconventional Marketing Examples" class="w-full h-auto rounded-lg shadow-xl">
+        </div>
+    </section>
+
+    <!-- 
+      Section 16: What's Next?
+      This section serves as the conclusion, posing questions about A24's future.
+    -->
+    <section id="whats-next-title" class="content-section dark-section">
+        <div class="text-center">
+            <h2 class="text-7xl md:text-9xl font-black animate-on-scroll">What's Next?</h2>
+        </div>
+        <div class="gradient-overlay-to-light"></div>
+    </section>
+
+    <section id="whats-next-content" class="content-section text-section-white">
+        <div class="max-w-3xl w-full text-lg md:text-xl leading-relaxed space-y-16">
+            <p class="animate-on-scroll">A24's unique marketing strategy has clearly paid off, capturing the attention of Wall Street. In March 2022, the company received a <strong>$225 million</strong> equity investment from Stripes, cementing its valuation at an impressive <strong>$2.5 billion</strong>.</p>
+            
+            <div class="animate-on-scroll space-y-6" style="transition-delay: 0.2s;">
+                <p>Herein lies the pressure, as A24's story now echoes a familiar cautionary tale. Miramax followed the same indie-champion playbook in the 90s, only to lose its identity after being acquired by corporate giant Disney.</p>
+                <img src="https://raw.githubusercontent.com/Chipz-02/desktop-tutorial/refs/heads/main/Miramax.png" alt="Miramax Logo" class="w-full max-w-md mx-auto h-auto rounded-lg shadow-lg">
+            </div>
+
+            <p class="animate-on-scroll" style="transition-delay: 0.4s;">For perspective, Amazon acquired the 97-year-old MGM studios for <strong>$8.45 billion</strong>. At just 12 years old, A24 achieved nearly a third of that valuation, a testament to the immense value placed on its modern brand and library.</p>
+            
+            <div class="animate-on-scroll space-y-6" style="transition-delay: 0.6s;">
+                <p>This pressure to grow is visible in A24's recent strategy. The studio's biggest-budget film, Civil War, and sequels to its horror franchise X, suggest a slow pivot towards the mainstream playbook they once defined themselves against.</p>
+                <img src="https://raw.githubusercontent.com/Chipz-02/desktop-tutorial/refs/heads/main/Map.png" alt="Civil War and X Movie Posters" class="w-full h-auto rounded-lg shadow-lg">
+            </div>
+
+            <p class="animate-on-scroll" style="transition-delay: 0.8s;">Will A24 be able to maintain its disruptive, artistic vibe as it grows into a major industry player? Or is it destined to become a case study for business schools—another indie darling swallowed by success?</p>
+            
+            <div class="animate-on-scroll text-center" style="transition-delay: 1s;">
+                 <img src="https://raw.githubusercontent.com/kush-a26/The-office-dialogue-chart/refs/heads/main/map%20final.png" alt="A24 Highway Sign" class="w-full max-w-md mx-auto h-auto rounded-lg shadow-lg">
+                 <p class="text-sm text-gray-500 mt-2">(hint of why the name A24 studio)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 17: Footer -->
+    <footer class="dark-section h-48">
+        <!-- Empty footer to provide a clean end to the scroll -->
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- General Scroll Animation Logic ---
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+            animatedElements.forEach(el => observer.observe(el));
+
+            // --- Carousel Logic ---
+            const images = document.querySelectorAll('.carousel-image');
+            let currentImageIndex = 0;
+            function showNextImage() {
+                if (images.length === 0) return;
+                images[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                images[currentImageIndex].classList.add('active');
+            }
+            if (images.length > 1) setInterval(showNextImage, 5000);
+
+            // --- Moonlight Timeline Highlight & Transition Logic ---
+            const timelineImage = document.getElementById('timeline-image');
+            const moonlightHighlight = document.getElementById('moonlight-highlight');
+            const moonlightSection = document.getElementById('moonlight-section');
+            
+            timelineImage.onload = () => {
+                const moonlightPosterRect = {
+                    leftPercent: 35.5, topPercent: 33,
+                    widthPercent: 6.5, heightPercent: 34
+                };
+
+                function positionHighlight() {
+                    const timelineRect = timelineImage.getBoundingClientRect();
+                    moonlightHighlight.style.left = `${timelineRect.left}px`;
+                    moonlightHighlight.style.top = `${timelineRect.top}px`;
+                    moonlightHighlight.style.width = `${timelineRect.width}px`;
+                    moonlightHighlight.style.height = `${timelineRect.height}px`;
+                    
+                    moonlightHighlight.style.clipPath = `inset(${moonlightPosterRect.topPercent}% ${100 - moonlightPosterRect.leftPercent - moonlightPosterRect.widthPercent}% ${100 - moonlightPosterRect.topPercent - moonlightPosterRect.heightPercent}% ${moonlightPosterRect.leftPercent}%)`;
+                }
+                
+                positionHighlight();
+                window.addEventListener('resize', positionHighlight);
+
+                const highlightObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        moonlightHighlight.style.opacity = entry.isIntersecting ? '1' : '0';
+                        moonlightHighlight.style.transform = entry.isIntersecting ? 'scale(1)' : 'scale(0.95)';
+                    });
+                }, { rootMargin: '0px 0px -50% 0px' });
+
+                highlightObserver.observe(moonlightSection);
+            };
+            if (timelineImage.complete) timelineImage.onload();
+        });
+    </script>
+
+</body>
+</html>
+
